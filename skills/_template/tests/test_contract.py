@@ -8,10 +8,6 @@
 # Run:  pytest tests/ -v
 #       (or via Makefile: make test)
 
-import subprocess
-import sys
-
-
 def test_skill_yaml_exists():
     """skill.yaml manifest must be present."""
     from pathlib import Path

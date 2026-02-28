@@ -41,9 +41,9 @@ skills/_template/
 
 ### 1.3 How to create a new skill
 
-1. **Copy the template** into `8r4n/deerflow-skills`:
+1. **Copy the template** from `deerflow-ops` into your local clone of `deerflow-skills`:
    ```bash
-   cp -r skills/_template skills/<new-skill-name>
+   cp -r /path/to/deerflow-ops/skills/_template /path/to/deerflow-skills/skills/<new-skill-name>
    ```
 
 2. **Replace placeholders** — search for `<skill-name>` in all files and replace with the actual name.
