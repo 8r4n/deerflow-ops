@@ -288,5 +288,7 @@ The system can self-plan by creating new mission issues:
 
 - [System whitepaper](whitepaper.md)
 - [DeerFlow architecture](deerflow-software-architecture.md)
+- [Phase 2 playbook — template skill](playbook-phase2-template-skill.md)
+- [Phase 3 playbook — autonomous skill acquisition](playbook-phase3-autonomous-skill-acquisition.md)
 - [Label taxonomy](labels.md)
 - [Index issues](index-issues.md)

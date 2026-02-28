@@ -172,7 +172,8 @@ deerflow-ops/
 │   ├── labels.md                    ← GitHub label taxonomy
 │   ├── index-issues.md              ← maintaining pinned index issues
 │   ├── playbook-phase1-tooling.md   ← Phase 1 tooling playbook
-│   └── playbook-phase2-template-skill.md ← Phase 2 template skill playbook
+│   ├── playbook-phase2-template-skill.md ← Phase 2 template skill playbook
+│   └── playbook-phase3-autonomous-skill-acquisition.md ← Phase 3 autonomous skill acquisition
 └── .github/
     ├── ISSUE_TEMPLATE/              ← mission, run log, memory templates
     └── workflows/

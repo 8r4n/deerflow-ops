@@ -139,6 +139,7 @@ A skill is considered "shippable" when:
 
 - [Skill standard](https://github.com/8r4n/deerflow-skills/blob/main/docs/skill-standard.md)
 - [Phase 1 playbook](playbook-phase1-tooling.md)
+- [Phase 3 playbook — autonomous skill acquisition](playbook-phase3-autonomous-skill-acquisition.md)
 - [GHCR publish workflow](../.github/workflows/ghcr-publish.yml)
 - [Label taxonomy](labels.md)
 - [System whitepaper](whitepaper.md)
