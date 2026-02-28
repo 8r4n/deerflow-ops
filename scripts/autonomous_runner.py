@@ -105,6 +105,30 @@ def list_active_missions(repo: str) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
+def _has_label(issue: dict, prefix: str) -> bool:
+    """Check whether the issue carries a label starting with *prefix*."""
+    return any(
+        lbl["name"].startswith(prefix) for lbl in issue.get("labels", [])
+    )
+
+
+# Skill-acquisition context appended to mission:dev prompts so the agent
+# follows the conventions defined in 8r4n/deerflow-skills.
+_SKILL_ACQUISITION_CONTEXT = """\
+
+Skill-acquisition conventions (from 8r4n/deerflow-skills):
+- Every skill (except _template) MUST be added as a git submodule in
+  deerflow-skills, not committed directly. Create a separate skill repo
+  first (e.g. deerflow-skill-<name>), then add it via
+  `git submodule add <url> skills/<name>`.
+- A CI check (validate-submodules) enforces this on every PR.
+- Required files per skill: README.md, Dockerfile, skill.yaml, tests/.
+- GHCR image naming: ghcr.io/8r4n/deerflow-skills/<skill-name>:<tag>.
+- Create a memory:skill issue in deerflow-ops linking the PR, GHCR image,
+  tools exposed, and verification evidence.
+"""
+
+
 def build_mission_prompt(issue: dict, repo: str) -> str:
     """Turn a mission issue into a DeerFlow prompt."""
     title = issue.get("title", "")
@@ -112,7 +136,7 @@ def build_mission_prompt(issue: dict, repo: str) -> str:
     number = issue.get("number", "?")
     labels = ", ".join(lbl["name"] for lbl in issue.get("labels", []))
 
-    return (
+    prompt = (
         f"You are processing mission issue #{number} from {repo}.\n\n"
         f"**Title:** {title}\n"
         f"**Labels:** {labels}\n\n"
@@ -123,6 +147,12 @@ def build_mission_prompt(issue: dict, repo: str) -> str:
         "3. Post progress updates as comments on the run:log issue.\n"
         "4. When done, post a summary comment on this mission issue and close the run log.\n"
     )
+
+    # For skill-acquisition missions, append deerflow-skills conventions
+    if _has_label(issue, "mission:dev"):
+        prompt += _SKILL_ACQUISITION_CONTEXT
+
+    return prompt
 
 # ---------------------------------------------------------------------------
 # DeerFlow invocation

@@ -45,6 +45,29 @@ class TestBuildMissionPrompt:
         prompt = autonomous_runner.build_mission_prompt(issue, "o/r")
         assert "Labels:" in prompt
 
+    def test_dev_mission_includes_skill_conventions(self):
+        issue = {
+            "number": 5,
+            "title": "Acquire skill: foo",
+            "body": "Wrap foo.",
+            "labels": [{"name": "mission:dev"}, {"name": "status:active"}],
+        }
+        prompt = autonomous_runner.build_mission_prompt(issue, "o/r")
+        assert "submodule" in prompt
+        assert "ghcr.io" in prompt
+        assert "memory:skill" in prompt
+        assert "validate-submodules" in prompt
+
+    def test_non_dev_mission_omits_skill_conventions(self):
+        issue = {
+            "number": 6,
+            "title": "Plan next quarter",
+            "body": "Create a plan.",
+            "labels": [{"name": "mission:planning"}, {"name": "status:active"}],
+        }
+        prompt = autonomous_runner.build_mission_prompt(issue, "o/r")
+        assert "submodule" not in prompt
+
 
 # ---------------------------------------------------------------------------
 # list_active_missions filtering
