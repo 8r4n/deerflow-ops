@@ -17,18 +17,17 @@ What this skill does and when to use it.
 ## Tools exposed
 List tool names and one-line descriptions.
 
-## Docker recipe
+## GHCR image
 
 ### Build
-- Image tag:
-- Build context:
+- Image reference: `ghcr.io/8r4n/deerflow-skills/<skill-name>`
+- Dockerfile path:
 - Build args:
 
 ### Run
-- Command:
+- Pull command: `docker pull ghcr.io/8r4n/deerflow-skills/<skill-name>:<tag>`
+- Run command:
 - Ports:
-- Mounts:
-- Network mode:
 - Required env vars (names only):
 
 ## Examples

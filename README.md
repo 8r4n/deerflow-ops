@@ -15,9 +15,10 @@
 The system implements an autonomous personal assistant that uses:
 
 - **DeerFlow** for agent orchestration (planner → executor → verifier loop)
-- **MCP servers** for tool integration (GitHub, web fetch, Docker Spawner)
-- **Docker sandboxing** for safe execution of third-party code
-- **GitHub Issues** as the durable memory store and audit trail
+- **MCP servers** for tool integration (GitHub, web fetch, Codespaces)
+- **GitHub Codespaces** for safe, cloud-hosted execution environments
+- **GitHub Container Registry (ghcr.io)** for versioned skill image publishing
+- **GitHub Issues** as the durable memory store, audit trail, and programmatic progress interface
 
 See [`docs/whitepaper.md`](docs/whitepaper.md) for the full design rationale.
 
@@ -25,10 +26,12 @@ See [`docs/whitepaper.md`](docs/whitepaper.md) for the full design rationale.
 
 ```
 Mission issue (deerflow-ops)
-  └─► DeerFlow reads mission
-        └─► Creates run log issue
-              └─► Uses MCP tools (GitHub, Docker, web fetch)
+  └─► DeerFlow reads mission (via GitHub MCP)
+        └─► Creates run log issue (via GitHub MCP)
+              └─► Executes in GitHub Codespace
                     ├─► PRs in deerflow-skills
+                    ├─► Skill images pushed to ghcr.io
+                    ├─► Progress posted to issues (via GitHub MCP)
                     ├─► memory:* issues in deerflow-ops
                     └─► Links everything for traceability
 ```
@@ -41,15 +44,25 @@ Mission issue (deerflow-ops)
 
 | Requirement | Minimum |
 |-------------|---------|
+| GitHub account | With Codespaces access |
 | Git | 2.x |
-| Docker | 24.x+ |
 | Python | 3.11+ |
 | Node.js | 18+ (for DeerFlow frontend) |
 | Make | any |
 
-You also need API keys for at least one LLM provider (OpenAI, Anthropic, etc.) and a search provider (Tavily recommended).
+You also need API keys for at least one LLM provider (OpenAI, Anthropic, etc.) and a search provider (Tavily recommended). A `GITHUB_TOKEN` with `repo`, `packages:write`, and `codespace` scopes is required for GHCR and Codespaces integration.
 
-### 1. Clone this repo with the submodule
+### 1. Open in GitHub Codespaces (recommended)
+
+Click **Code → Codespaces → Create codespace on main** in the GitHub UI, or use the CLI:
+
+```bash
+gh codespace create --repo 8r4n/deerflow-ops --machine standardLinux32gb
+```
+
+The dev container will automatically install dependencies, initialize the submodule, and configure GHCR authentication.
+
+### 1b. Alternative: Clone locally
 
 ```bash
 git clone --recurse-submodules https://github.com/8r4n/deerflow-ops.git
@@ -81,15 +94,17 @@ Edit `deer-flow/config.yaml` to configure your preferred model(s). See the [upst
 
 ### 3. Run DeerFlow
 
-#### Option A — Docker (recommended)
+#### Option A — GitHub Codespaces (recommended)
+
+If running in a Codespace, all services start automatically via the dev container lifecycle. Access the UI through the Codespace port-forwarding on port **2026**.
+
+To manually start services:
 
 ```bash
 cd deer-flow
-make docker-init     # pull sandbox image (first time only)
-make docker-start    # start all services
+make backend         # start backend services
+cd frontend && pnpm install && pnpm dev  # start frontend (separate terminal)
 ```
-
-Access the UI at **http://localhost:2026**.
 
 #### Option B — Local development
 
@@ -110,9 +125,9 @@ The system uses these MCP servers:
 
 | Server | Purpose | Setup |
 |--------|---------|-------|
-| **GitHub MCP** | Read/write issues and PRs, search code | Provide a `GITHUB_TOKEN` with repo scope |
+| **GitHub MCP** | Read/write issues and PRs, search code, update progress, plan missions | Provide a `GITHUB_TOKEN` with `repo`, `packages:write`, and `codespace` scopes |
 | **Web fetch MCP** | Ingest external documentation | Included in DeerFlow |
-| **Docker Spawner MCP** | Build/run/stop containers with strict policy | Custom — see Phase 1 roadmap |
+| **Codespaces MCP** | Manage Codespace lifecycle (create, start, stop, delete) | Configured via dev container; uses `GITHUB_TOKEN` |
 
 ### 5. Staying up to date with upstream DeerFlow
 
@@ -134,8 +149,11 @@ git commit -m "Update deer-flow submodule to latest upstream"
 deerflow-ops/
 ├── README.md                   ← you are here
 ├── deer-flow/                  ← bytedance/deer-flow submodule
+├── .devcontainer/
+│   └── devcontainer.json      ← GitHub Codespaces dev container config
 ├── docs/
 │   ├── whitepaper.md           ← full system design
+│   ├── deerflow-software-architecture.md ← DeerFlow architecture analysis
 │   ├── labels.md               ← GitHub label taxonomy
 │   └── index-issues.md         ← how to maintain pinned index issues
 └── .github/

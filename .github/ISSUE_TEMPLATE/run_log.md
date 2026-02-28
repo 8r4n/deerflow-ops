@@ -28,10 +28,15 @@ assignees: []
 - Blockers:
 - Next action:
 
-## Docker spawned systems (append entries)
-| Time | Purpose | Image/Tag | Container ID | Network | TTL | CPU/Mem | Logs |
-|------|---------|-----------|--------------|---------|-----|---------|------|
-|      |         |           |              |         |     |         |      |
+## Codespaces environments (append entries)
+| Time | Purpose | Codespace Name | Machine Type | Idle Timeout | Status | Logs |
+|------|---------|----------------|--------------|--------------|--------|------|
+|      |         |                |              |              |        |      |
+
+## GHCR images pushed (append entries)
+| Time | Skill | Image Reference | Tag | Size |
+|------|-------|-----------------|-----|------|
+|      |       |                 |     |      |
 
 ## Artifacts
 - PRs:
