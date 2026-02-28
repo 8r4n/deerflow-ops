@@ -111,13 +111,14 @@ The `.devcontainer/devcontainer.json` configures:
 
 ### 2.3 Post-create setup
 
-The devcontainer automatically:
+The devcontainer automatically (via `.devcontainer/post-create.sh`):
 1. Initializes the `deer-flow` submodule
 2. Installs DeerFlow Python dependencies (`pip install -e '.[dev]'`)
 3. Generates `config.yaml` and `.env` from example templates (`make config`)
-4. Installs frontend dependencies (`pnpm install`)
-5. Authenticates to GHCR using `GITHUB_TOKEN`
-6. Pre-pulls the aio sandbox image (`all-in-one-sandbox:latest`) for Docker-based sandbox execution
+4. Enables the aio sandbox in `config.yaml` (replaces `LocalSandboxProvider` with `AioSandboxProvider`)
+5. Installs frontend dependencies (`pnpm install`)
+6. Authenticates to GHCR using `GITHUB_TOKEN`
+7. Pre-pulls the aio sandbox image (`all-in-one-sandbox:latest`)
 
 ### 2.4 Starting DeerFlow in a Codespace
 
@@ -132,18 +133,16 @@ make dev
 # 3. Access UI via Codespace port 2026
 ```
 
-### 2.5 Enabling the aio sandbox
+### 2.5 Aio sandbox in Codespaces
 
-By default, DeerFlow uses local sandbox execution. To run sandbox code in isolated Docker containers (the "aio" container mode), edit `deer-flow/config.yaml`:
+The aio sandbox is **enabled by default** in Codespaces. The post-create script patches `config.yaml` to use `AioSandboxProvider` instead of `LocalSandboxProvider`. The sandbox image (`enterprise-public-cn-beijing.cr.volces.com/vefaas-public/all-in-one-sandbox:latest`) is pre-pulled during codespace creation, and Docker-in-Docker is enabled so the provider can start and manage sandbox containers automatically.
+
+To revert to local sandbox execution, edit `deer-flow/config.yaml`:
 
 ```yaml
 sandbox:
-  use: src.community.aio_sandbox:AioSandboxProvider
-  port: 8080
-  auto_start: true
+  use: src.sandbox.local:LocalSandboxProvider
 ```
-
-The aio sandbox image (`enterprise-public-cn-beijing.cr.volces.com/vefaas-public/all-in-one-sandbox:latest`) is pre-pulled during codespace creation. Docker-in-Docker is enabled so the `AioSandboxProvider` can start and manage sandbox containers automatically.
 
 See the [upstream Sandbox Configuration Guide](https://github.com/bytedance/deer-flow/blob/main/backend/docs/CONFIGURATION.md#sandbox) for additional options (custom mounts, environment variables, provisioner mode).
 

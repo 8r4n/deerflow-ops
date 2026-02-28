@@ -112,14 +112,7 @@ TAVILY_API_KEY=your-tavily-api-key
 
 Edit `deer-flow/config.yaml` to select your preferred model(s). See the [upstream configuration guide](https://github.com/bytedance/deer-flow/blob/main/backend/docs/CONFIGURATION.md) for details.
 
-To enable the aio sandbox (isolated Docker-based code execution), set this in `deer-flow/config.yaml`:
-
-```yaml
-sandbox:
-  use: src.community.aio_sandbox:AioSandboxProvider
-```
-
-The aio sandbox image is pre-pulled during Codespace creation. See `docs/playbook-phase1-tooling.md` for details.
+> **Codespaces:** The aio sandbox (isolated Docker-based code execution) is enabled by default. The sandbox image is pre-pulled during creation. See `docs/playbook-phase1-tooling.md` for details.
 
 ### 3. Start services
 
