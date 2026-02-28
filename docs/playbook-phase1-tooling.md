@@ -97,9 +97,9 @@ The `.devcontainer/devcontainer.json` configures:
 |-----------|-------|
 | Base image | `mcr.microsoft.com/devcontainers/python:3.12` |
 | Node.js | 20 (via devcontainer feature) |
-| Docker | Docker-in-Docker (for building skill images) |
+| Docker | Docker-in-Docker (for building skill images and running aio sandbox containers) |
 | GitHub CLI | Pre-installed (for `gh` commands) |
-| Ports | 2024 (LangGraph), 2026 (Nginx), 3000 (frontend), 8001 (Gateway API) |
+| Ports | 2024 (LangGraph), 2026 (Nginx), 3000 (frontend), 8001 (Gateway API), 8080 (aio sandbox) |
 
 ### 2.2 Environment variables
 
@@ -114,25 +114,38 @@ The `.devcontainer/devcontainer.json` configures:
 The devcontainer automatically:
 1. Initializes the `deer-flow` submodule
 2. Installs DeerFlow Python dependencies (`pip install -e '.[dev]'`)
-3. Installs frontend dependencies (`pnpm install`)
-4. Authenticates to GHCR using `GITHUB_TOKEN`
+3. Generates `config.yaml` and `.env` from example templates (`make config`)
+4. Installs frontend dependencies (`pnpm install`)
+5. Authenticates to GHCR using `GITHUB_TOKEN`
+6. Pre-pulls the aio sandbox image (`all-in-one-sandbox:latest`) for Docker-based sandbox execution
 
 ### 2.4 Starting DeerFlow in a Codespace
 
 ```bash
-# 1. Configure API keys (first time only)
+# 1. Configure API keys (first time only — config.yaml and .env are auto-generated)
 cd deer-flow
-make config
 # Edit .env with your LLM and search provider API keys
 
-# 2. Start backend services
-make backend
+# 2. Start all services (backend + frontend + nginx)
+make dev
 
-# 3. Start frontend (separate terminal)
-cd deer-flow/frontend && pnpm dev
-
-# 4. Access UI via Codespace port 2026
+# 3. Access UI via Codespace port 2026
 ```
+
+### 2.5 Enabling the aio sandbox
+
+By default, DeerFlow uses local sandbox execution. To run sandbox code in isolated Docker containers (the "aio" container mode), edit `deer-flow/config.yaml`:
+
+```yaml
+sandbox:
+  use: src.community.aio_sandbox:AioSandboxProvider
+  port: 8080
+  auto_start: true
+```
+
+The aio sandbox image (`enterprise-public-cn-beijing.cr.volces.com/vefaas-public/all-in-one-sandbox:latest`) is pre-pulled during codespace creation. Docker-in-Docker is enabled so the `AioSandboxProvider` can start and manage sandbox containers automatically.
+
+See the [upstream Sandbox Configuration Guide](https://github.com/bytedance/deer-flow/blob/main/backend/docs/CONFIGURATION.md#sandbox) for additional options (custom mounts, environment variables, provisioner mode).
 
 ---
 
