@@ -9,7 +9,7 @@
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "postCreateCommand": "git submodule update --init --recursive && cd deer-flow && pip install -e '.[dev]' && pip install mcp-server-fetch==2025.4.7 && make config && cd frontend && npm install -g pnpm && pnpm install && (echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin 2>/dev/null || true) && (docker pull enterprise-public-cn-beijing.cr.volces.com/vefaas-public/all-in-one-sandbox:latest 2>/dev/null || true)",
-  "postStartCommand": "echo '✅ Codespace ready — edit deer-flow/.env with API keys, then: cd deer-flow && make dev (starts all services on localhost:2026). Enable aio sandbox in deer-flow/config.yaml for isolated Docker execution.'",
+  "postStartCommand": "echo '✅ Codespace ready — edit deer-flow/.env with API keys, then: cd deer-flow && make dev'",
   "containerEnv": {
     "DOCKER_BUILDKIT": "1",
     "DEER_FLOW_EXTENSIONS_CONFIG_PATH": "${containerWorkspaceFolder}/extensions_config.json"
