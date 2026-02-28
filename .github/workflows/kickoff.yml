@@ -109,7 +109,7 @@ jobs:
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: |
           python -c "
-          import os, json
+          import os
 
           issue = os.environ['MISSION_ISSUE']
           repo = os.environ['MISSION_REPO']
