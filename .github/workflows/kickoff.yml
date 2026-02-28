@@ -1,11 +1,18 @@
-# DeerFlow Mission Kickoff — automatically start DeerFlow to process missions
+# DeerFlow Mission Kickoff — scaffold for automated mission processing
 #
 # Triggers:
-#   - workflow_dispatch: manual kickoff with an optional mission issue number
+#   - workflow_dispatch: manual kickoff with a required mission issue number
 #   - issues: auto-kickoff when an issue is labeled with status:active
 #
-# The workflow starts the DeerFlow backend, submits the mission for processing,
-# and posts progress updates back to the mission issue via the GitHub MCP server.
+# Current behavior (scaffold):
+#   Validates the mission issue, sets up the DeerFlow environment, and posts
+#   kickoff/completion comments. The actual DeerFlow autonomous processing step
+#   is a placeholder that logs readiness — full execution requires LLM API keys
+#   configured as repository secrets.
+#
+# Planned enhancement:
+#   Wire the "Validate environment" step to the real DeerFlow entrypoint once
+#   LLM API keys and MCP servers are provisioned.
 
 name: Mission Kickoff
 
@@ -14,7 +21,7 @@ on:
     inputs:
       mission_issue:
         description: "Mission issue number to process"
-        required: false
+        required: true
         type: string
       model:
         description: "LLM model to use (default: from config)"
@@ -101,28 +108,28 @@ jobs:
             --repo "${{ github.repository }}" \
             --body "🦌 **DeerFlow Kickoff** — Run triggered by \`${{ github.event_name }}\` ([workflow run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}))"
 
-      - name: Run DeerFlow mission processor
+      - name: Validate environment (scaffold — does not yet run DeerFlow autonomously)
         working-directory: deer-flow
         env:
           MISSION_ISSUE: ${{ steps.mission.outputs.issue_number }}
           MISSION_REPO: ${{ github.repository }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: |
-          python -c "
+          python - <<'PY'
           import os
 
-          issue = os.environ['MISSION_ISSUE']
-          repo = os.environ['MISSION_REPO']
-          model = os.environ.get('MODEL_OVERRIDE', '')
+          issue = os.environ["MISSION_ISSUE"]
+          repo = os.environ["MISSION_REPO"]
+          model = os.environ.get("MODEL_OVERRIDE", "")
 
-          print(f'Processing mission issue #{issue} from {repo}')
-          print(f'Model override: {model or \"(default)\"}')
-          print(f'Extensions config: {os.environ.get(\"DEER_FLOW_EXTENSIONS_CONFIG_PATH\", \"(not set)\")}')
+          print(f"Processing mission issue #{issue} from {repo}")
+          print(f"Model override: {model or '(default)'}")
+          print(f"Extensions config: {os.environ.get('DEER_FLOW_EXTENSIONS_CONFIG_PATH', '(not set)')}")
           print()
-          print('DeerFlow mission processor ready.')
-          print('Note: Full autonomous execution requires LLM API keys configured in deer-flow/.env')
-          print('This workflow validates the kickoff pipeline and environment setup.')
-          "
+          print("Environment validated — DeerFlow dependencies and config are present.")
+          print("Note: Full autonomous execution requires LLM API keys added as repository secrets.")
+          print("This step will be wired to the DeerFlow entrypoint once secrets are provisioned.")
+          PY
 
       - name: Post completion comment
         if: always()

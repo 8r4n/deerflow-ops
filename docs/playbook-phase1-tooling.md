@@ -27,7 +27,7 @@ The GitHub MCP server provides programmatic access to issues, PRs, code search, 
       "enabled": true,
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": ["-y", "@modelcontextprotocol/server-github@2025.4.8"],
       "env": {
         "GITHUB_TOKEN": "$GITHUB_TOKEN"
       }
@@ -38,6 +38,8 @@ The GitHub MCP server provides programmatic access to issues, PRs, code search, 
 
 **Required token scopes:** `repo`, `write:packages`, `codespace`
 
+> **Supply-chain note:** The GitHub MCP server version is pinned (`@2025.4.8`) in the config to prevent implicit latest-version resolution via `npx`. When upgrading, update the pinned version explicitly and verify the package integrity.
+
 **Key capabilities enabled:**
 - Read/write GitHub Issues (missions, run logs, memory entries)
 - Create and update PRs in `8r4n/deerflow-skills`
@@ -47,7 +49,7 @@ The GitHub MCP server provides programmatic access to issues, PRs, code search, 
 
 ### 1.2 Web Fetch MCP Server
 
-The web fetch MCP server ingests external documentation and web sources for skill discovery and research missions.
+The web fetch MCP server ingests external documentation and web sources for skill discovery and research missions. It is a Python package (`mcp-server-fetch`).
 
 ```json
 {
@@ -55,13 +57,20 @@ The web fetch MCP server ingests external documentation and web sources for skil
     "fetch": {
       "enabled": true,
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "command": "mcp-server-fetch",
+      "args": [],
       "env": {}
     }
   }
 }
 ```
+
+**Installation** (included in DeerFlow's dev dependencies, or install manually):
+```bash
+pip install mcp-server-fetch==2025.4.7
+```
+
+> **Supply-chain note:** Pin the version when installing (`==2025.4.7`). The config invokes the locally installed binary rather than downloading on each run.
 
 > **Note:** DeerFlow also includes built-in web search (Tavily) and web fetch (Jina) tools. The MCP fetch server provides an additional integration point for use cases requiring the MCP protocol.
 
@@ -151,10 +160,13 @@ The devcontainer post-create command handles this automatically.
 
 The `.github/workflows/ghcr-publish.yml` workflow:
 
-- **Triggers:** `workflow_dispatch` (manual) or push to `main` (when Dockerfile changes)
+- **Triggers:** `workflow_dispatch` only (manual)
+- **Prerequisites:** A `Dockerfile` must exist at the repo root (the workflow checks and fails gracefully if absent)
 - **Permissions:** `contents: read`, `packages: write`
 - **Image naming:** `ghcr.io/8r4n/deerflow-ops:<tag>`
 - **Tags:** `sha-<short-sha>`, `latest` (on main branch), custom tag (on dispatch)
+
+> **Note:** This repo does not currently have a `Dockerfile`. The workflow serves as the reference pattern for GHCR publishing; the actual skill image builds will live in `8r4n/deerflow-skills`.
 
 ### 3.3 Skill image convention
 
@@ -180,13 +192,19 @@ The `.github/workflows/kickoff.yml` workflow automates DeerFlow mission processi
 
 ### 4.2 Workflow steps
 
+**Current behavior (scaffold)**
+
 1. **Determine mission issue** — from dispatch input or triggering issue event
 2. **Validate mission label** — confirms the issue has a `mission:*` label
 3. **Set up environment** — Python 3.12, Node.js 20, DeerFlow dependencies
 4. **Configure DeerFlow** — applies `config.yaml` and `.env` from examples
 5. **Post kickoff comment** — notifies the mission issue that processing has started
-6. **Run DeerFlow** — processes the mission using the configured LLM and MCP tools
+6. **Validate environment** — confirms DeerFlow dependencies and config are present (does not yet invoke DeerFlow autonomously)
 7. **Post completion comment** — reports success or failure back to the issue
+
+**Planned enhancement (not yet implemented)**
+
+Step 6 will be wired to the real DeerFlow entrypoint once LLM API keys are configured as repository secrets. This will enable full autonomous mission processing through the kickoff workflow.
 
 ### 4.3 Required secrets
 

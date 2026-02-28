@@ -4,7 +4,7 @@
       "enabled": true,
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": ["-y", "@modelcontextprotocol/server-github@2025.4.8"],
       "env": {
         "GITHUB_TOKEN": "$GITHUB_TOKEN"
       },
@@ -13,10 +13,10 @@
     "fetch": {
       "enabled": true,
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "command": "mcp-server-fetch",
+      "args": [],
       "env": {},
-      "description": "Web fetch MCP server — ingest external documentation and web sources"
+      "description": "Web fetch MCP server — ingest external documentation and web sources (Python: mcp-server-fetch==2025.4.7)"
     }
   },
   "skills": {}
