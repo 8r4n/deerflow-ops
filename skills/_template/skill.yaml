@@ -1,0 +1,21 @@
+# Skill manifest — <skill-name>
+#
+# Required fields per the skill standard:
+#   https://github.com/8r4n/deerflow-skills/blob/main/docs/skill-standard.md
+
+name: "<skill-name>"
+version: "0.1.0"
+
+tools:
+  - name: "tool_name"
+    description: "One-line description of what this tool does"
+
+runtime:
+  image: "ghcr.io/8r4n/deerflow-skills/<skill-name>"
+  ports:
+    - 8080
+
+env:
+  - EXAMPLE_VAR
+
+mounts: []

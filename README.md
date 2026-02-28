@@ -157,6 +157,14 @@ deerflow-ops/
 ├── extensions_config.json           ← MCP server configuration
 ├── assets/                          ← project logo and images
 ├── deer-flow/                       ← bytedance/deer-flow submodule
+├── skills/
+│   └── _template/                   ← canonical skill skeleton (Phase 2)
+│       ├── README.md                ← template documentation
+│       ├── Dockerfile               ← container image build
+│       ├── skill.yaml               ← skill manifest
+│       ├── Makefile                 ← build, test, and GHCR push targets
+│       ├── requirements.txt         ← Python dependencies
+│       └── tests/                   ← contract test skeleton
 ├── .devcontainer/
 │   └── devcontainer.json            ← GitHub Codespaces dev container
 ├── docs/
@@ -164,7 +172,8 @@ deerflow-ops/
 │   ├── deerflow-software-architecture.md
 │   ├── labels.md                    ← GitHub label taxonomy
 │   ├── index-issues.md              ← maintaining pinned index issues
-│   └── playbook-phase1-tooling.md   ← Phase 1 tooling playbook
+│   ├── playbook-phase1-tooling.md   ← Phase 1 tooling playbook
+│   └── playbook-phase2-template-skill.md ← Phase 2 template skill playbook
 └── .github/
     ├── ISSUE_TEMPLATE/              ← mission, run log, memory templates
     └── workflows/
@@ -198,8 +207,8 @@ All durable memory lives as GitHub Issues, organized by label:
 |-------|-------------|--------|
 | **0** | Repo bootstrap — templates, docs, labels, indexes | ✅ Done |
 | **1** | Tooling foundation — GitHub MCP, Codespaces, GHCR, web fetch MCP | ✅ Done |
-| **2** | Template skill — canonical `_template` skeleton with GHCR publish | 🔜 Next |
-| **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 Planned |
+| **2** | Template skill — canonical `_template` skeleton with GHCR publish | ✅ Done |
+| **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 Next |
 | **4+** | Expand mission coverage (planning, research, automation) | 🔜 Planned |
 
 ---
