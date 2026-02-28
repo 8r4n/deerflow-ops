@@ -77,7 +77,7 @@ These services communicate through well-defined interfaces: the frontend connect
 
 ## 2. Deployment Architecture
 
-DeerFlow supports three deployment modes, each offering a different level of isolation for code execution:
+DeerFlow supports four deployment modes, each offering a different level of isolation for code execution:
 
 ### Local Mode
 
@@ -86,6 +86,10 @@ All services run directly on the host machine. The sandbox executes commands via
 ### Docker All-in-One (AIO) Mode
 
 Services are containerized using Docker Compose on a shared bridge network. Sandbox execution occurs within dedicated containers that are lifecycle-managed by the platform. This mode provides process-level isolation suitable for single-tenant deployments.
+
+### GitHub Codespaces Mode
+
+Services run inside a GitHub Codespace defined by a dev container configuration (`.devcontainer/devcontainer.json`). This mode provides a cloud-hosted, ephemeral environment with pre-configured toolchains, GitHub API access, and native integration with the GitHub Container Registry (ghcr.io). Codespaces mode is the recommended deployment for the `deerflow-ops` system, enabling the agent to push skill images to GHCR and programmatically interface with GitHub Issues to update progress and plan future missions.
 
 ### Provisioner Mode
 
@@ -216,7 +220,7 @@ The sandbox system provides isolated execution environments for code and command
 
 - **`Sandbox`** — Abstract base class defining the execution interface: `execute_command()`, `read_file()`, `write_file()`, `list_dir()`
 - **`LocalSandboxProvider`** — Local filesystem implementation using subprocess execution with path mappings between container and host paths
-- **Remote Providers** — Docker container and Kubernetes Pod implementations for stronger isolation
+- **Remote Providers** — Docker container, Kubernetes Pod, and GitHub Codespaces implementations for stronger isolation. In Codespaces mode, the sandbox runs inside a cloud-hosted dev container with native access to GitHub APIs and the GitHub Container Registry.
 
 Key design decisions:
 

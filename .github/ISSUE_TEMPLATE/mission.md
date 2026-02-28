@@ -38,23 +38,22 @@ What should the system accomplish?
   - [ ] `<owner/repo>`
 
 ### Allowed tools (MCP allowlist)
-- [ ] GitHub MCP (issues/PRs/search)
-- [ ] Docker Spawner MCP (build/run/stop/logs)
+- [ ] GitHub MCP (issues/PRs/search/progress updates)
+- [ ] Codespaces MCP (create/start/stop/delete Codespaces)
 - [ ] Web Fetch MCP
 - [ ] Command Exec MCP (allowlisted)
 - [ ] Other: ______________________
 
-### Docker policy (defaults; override only if needed)
-- Network: `none` by default; `bridge` only if required for installs
-- No privileged containers
-- No docker socket mounts
-- Workspace-only mounts
+### Codespaces policy (defaults; override only if needed)
+- Machine type: `standardLinux32gb` by default
+- Idle timeout: 30 minutes (default)
+- Retention period: 7 days (default)
+- GHCR push: allowed for `ghcr.io/8r4n/deerflow-skills/*` only
 
 ## Budgets
 - Max runtime: ___ minutes
 - Max tool calls: ___
-- Max containers spawned: ___
-- Max Docker build minutes: ___
+- Max Codespaces created: ___
 
 ## Inputs / context
 Links, pasted text, credentials *names* (no secrets), and any required context:
@@ -67,12 +66,14 @@ What tangible outputs should be produced?
 - [ ] Issue comment summary
 - [ ] `memory:*` entry created/updated in `8r4n/deerflow-ops`
 - [ ] PR opened in `8r4n/deerflow-skills` (if new/updated skill is needed)
+- [ ] Skill image pushed to `ghcr.io/8r4n/deerflow-skills/<skill-name>` (if applicable)
+- [ ] Progress updates posted to run-log issue
 - [ ] Other: ______________________
 
 ## Human checkpoints (approval gates)
 List any steps that must pause for your approval:
 - [ ] Open PR before merge (always)
-- [ ] Any Docker policy escalation (host networking, extra mounts, etc.)
+- [ ] Any Codespaces policy escalation (larger machine type, extended retention, etc.)
 - [ ] Anything involving sensitive data
 - [ ] Other: ______________________
 

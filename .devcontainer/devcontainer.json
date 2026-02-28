@@ -1,0 +1,31 @@
+{
+  "name": "DeerFlow Ops",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "git submodule update --init --recursive && cd deer-flow && pip install -e '.[dev]' && cd frontend && npm install -g pnpm && pnpm install",
+  "postStartCommand": "echo '✅ Codespace ready — run: cd deer-flow && make backend (then cd frontend && pnpm dev in a second terminal)'",
+  "containerEnv": {
+    "DOCKER_BUILDKIT": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "dbaeumer.vscode-eslint"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "README.md"
+      ]
+    }
+  },
+  "forwardPorts": [2024, 2026, 3000, 8001]
+}

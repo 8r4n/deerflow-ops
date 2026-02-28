@@ -38,7 +38,8 @@ This repository uses GitHub labels as a lightweight schema. The goal is to make 
 
 ## Tool labels (optional but helpful)
 - `tool:github`
-- `tool:docker`
+- `tool:codespaces`
+- `tool:ghcr`
 - `tool:mcp`
 - `tool:web`
 
