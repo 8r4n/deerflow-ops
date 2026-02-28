@@ -8,7 +8,8 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "postCreateCommand": "git submodule update --init --recursive",
+  "postCreateCommand": "git submodule update --init --recursive && cd deer-flow && pip install -e '.[dev]' && cd frontend && npm install -g pnpm && pnpm install",
+  "postStartCommand": "echo '✅ Codespace ready — run: cd deer-flow && make backend (then cd frontend && pnpm dev in a second terminal)'",
   "containerEnv": {
     "DOCKER_BUILDKIT": "1"
   },

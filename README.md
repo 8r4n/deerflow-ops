@@ -50,7 +50,7 @@ Mission issue (deerflow-ops)
 | Node.js | 18+ (for DeerFlow frontend) |
 | Make | any |
 
-You also need API keys for at least one LLM provider (OpenAI, Anthropic, etc.) and a search provider (Tavily recommended). A `GITHUB_TOKEN` with `repo`, `packages:write`, and `codespace` scopes is required for GHCR and Codespaces integration.
+You also need API keys for at least one LLM provider (OpenAI, Anthropic, etc.) and a search provider (Tavily recommended). A `GITHUB_TOKEN` with `repo`, `write:packages`, and `codespace` scopes is required for GHCR and Codespaces integration.
 
 ### 1. Open in GitHub Codespaces (recommended)
 
@@ -60,7 +60,7 @@ Click **Code → Codespaces → Create codespace on main** in the GitHub UI, or 
 gh codespace create --repo 8r4n/deerflow-ops --machine standardLinux32gb
 ```
 
-The dev container will automatically install dependencies, initialize the submodule, and configure GHCR authentication.
+The dev container will automatically initialize the submodule and install backend/frontend dependencies. You will still need to configure API keys (see step 2) and start services manually (see step 3).
 
 ### 1b. Alternative: Clone locally
 
@@ -96,15 +96,15 @@ Edit `deer-flow/config.yaml` to configure your preferred model(s). See the [upst
 
 #### Option A — GitHub Codespaces (recommended)
 
-If running in a Codespace, all services start automatically via the dev container lifecycle. Access the UI through the Codespace port-forwarding on port **2026**.
-
-To manually start services:
+If running in a Codespace, dependencies are pre-installed by the dev container. Start services manually:
 
 ```bash
 cd deer-flow
 make backend         # start backend services
-cd frontend && pnpm install && pnpm dev  # start frontend (separate terminal)
+cd frontend && pnpm dev  # start frontend (separate terminal)
 ```
+
+Access the UI through the Codespace port-forwarding on port **2026**.
 
 #### Option B — Local development
 
@@ -125,9 +125,9 @@ The system uses these MCP servers:
 
 | Server | Purpose | Setup |
 |--------|---------|-------|
-| **GitHub MCP** | Read/write issues and PRs, search code, update progress, plan missions | Provide a `GITHUB_TOKEN` with `repo`, `packages:write`, and `codespace` scopes |
+| **GitHub MCP** | Read/write issues and PRs, search code, update progress, plan missions | Provide a `GITHUB_TOKEN` with `repo`, `write:packages`, and `codespace` scopes |
 | **Web fetch MCP** | Ingest external documentation | Included in DeerFlow |
-| **Codespaces MCP** | Manage Codespace lifecycle (create, start, stop, delete) | Configured via dev container; uses `GITHUB_TOKEN` |
+| **Codespaces MCP** | Manage Codespace lifecycle (create, start, stop, delete) | Planned — see Phase 1 roadmap |
 
 ### 5. Staying up to date with upstream DeerFlow
 
