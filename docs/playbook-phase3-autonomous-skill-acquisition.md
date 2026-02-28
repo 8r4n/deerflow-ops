@@ -131,11 +131,11 @@ When DeerFlow processes a `mission:dev` or `mission:research` mission that invol
 │                                                  Web Fetch MCP  │
 │ 4. Evaluate candidates (docs, tests, license) ← GitHub MCP      │
 │ 5. Clone and prototype in Codespace sandbox   ← aio sandbox     │
-│ 6. Copy _template, implement skill wrapper    ← local tools     │
+│ 6. Create skill repo from _template           ← GitHub MCP      │
 │ 7. Write contract tests                       ← local tools     │
 │ 8. Build and test image (make build/test)     ← Docker-in-Docker│
 │ 9. Push image to GHCR                         ← Docker CLI      │
-│10. Open PR in deerflow-skills                 ← GitHub MCP      │
+│10. Add skill as submodule, open PR             ← GitHub MCP      │
 │11. Create memory:skill issue in deerflow-ops  ← GitHub MCP      │
 │12. Update run:log with results                ← GitHub MCP      │
 │13. Close run:log and update mission           ← GitHub MCP      │
@@ -166,8 +166,8 @@ DeerFlow creates a `memory:repo` issue in `deerflow-ops` documenting the evaluat
 **Step 5 — Prototype in sandbox.**  
 The selected library is installed in the aio sandbox and tested with sample inputs to validate functionality. This runs inside Docker-in-Docker in the Codespace.
 
-**Step 6 — Create skill from template.**  
-DeerFlow copies `skills/_template/` from `deerflow-ops` into a new `skills/<skill-name>/` directory (locally, for the PR). It replaces `<skill-name>` placeholders and implements the skill wrapper code.
+**Step 6 — Create skill repository and scaffold from template.**  
+DeerFlow creates a new repository (e.g., `8r4n/deerflow-skill-<name>`) and scaffolds it from the `skills/_template/` directory in `deerflow-ops`. It replaces `<skill-name>` placeholders and implements the skill wrapper code. The skill is **not** committed directly into `deerflow-skills` — the submodule workflow requires a separate repository (see [`docs/adding-a-skill.md`](https://github.com/8r4n/deerflow-skills/blob/main/docs/adding-a-skill.md) in `deerflow-skills`).
 
 **Step 7 — Write contract tests.**  
 Contract tests are added in `tests/test_contract.py` to validate that the skill server starts, tool endpoints respond, and errors are handled.
@@ -188,11 +188,13 @@ make tag-sha   # pushes :sha-<short-sha> tag
 Image naming follows the convention: `ghcr.io/8r4n/deerflow-skills/<skill-name>:<tag>`.
 
 **Step 10 — Open PR in deerflow-skills.**  
-DeerFlow uses the GitHub MCP server to create a pull request in `8r4n/deerflow-skills` containing the new skill folder. The PR description includes:
+DeerFlow uses the GitHub MCP server to create a pull request in `8r4n/deerflow-skills` that adds the skill as a **git submodule** (`git submodule add <url> skills/<name>`). The PR description includes:
 - Skill purpose and tools exposed
 - Build/test evidence
 - GHCR image reference
 - Link to the mission and run-log issues
+
+> A CI check (`validate-submodules`) runs on every PR to enforce the submodule requirement.
 
 **Step 11 — Create memory issue.**  
 A `memory:skill` issue is created in `deerflow-ops` with:
@@ -248,7 +250,7 @@ gh workflow run kickoff.yml \
 
 Label a mission issue with `status:active` → the kickoff workflow runs automatically.
 
-> **Note:** The kickoff workflow currently validates the environment but does not invoke DeerFlow autonomously (see §5 on wiring the entrypoint). Full autonomous execution requires LLM API keys configured as repository secrets.
+> **Note:** If LLM API keys (`OPENAI_API_KEY`) are not configured as repository secrets, the runner step exits gracefully without error.
 
 ### 4.3 Creating a skill acquisition mission
 
@@ -277,19 +279,12 @@ Discover, evaluate, and wrap <library-name> as a DeerFlow skill.
 
 ---
 
-## 5. Wiring the DeerFlow Entrypoint (Planned)
+## 5. Wiring the DeerFlow Entrypoint
 
-The kickoff workflow currently runs a scaffold step (§4.2). To enable full autonomous execution, the "Validate environment" step in `.github/workflows/kickoff.yml` must be replaced with a call to the DeerFlow entrypoint.
-
-**What is needed:**
-
-1. **Add LLM API keys** as repository secrets (`OPENAI_API_KEY`, `TAVILY_API_KEY`, etc.)
-2. **Add a cross-repo token** as a repository or Codespaces secret if the default `GITHUB_TOKEN` lacks sufficient scope for `deerflow-skills` access
-3. **Replace the scaffold step** in `kickoff.yml` with the actual DeerFlow invocation:
+The kickoff workflow invokes the autonomous runner (`scripts/autonomous_runner.py`) to process missions. When LLM API keys are configured as repository secrets, the workflow calls:
 
 ```yaml
-- name: Run DeerFlow autonomous mission
-  working-directory: deer-flow
+- name: Run autonomous mission
   env:
     MISSION_ISSUE: ${{ steps.mission.outputs.issue_number }}
     MISSION_REPO: ${{ github.repository }}
@@ -297,13 +292,15 @@ The kickoff workflow currently runs a scaffold step (§4.2). To enable full auto
     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
   run: |
-    python -m src.entrypoint \
+    python scripts/autonomous_runner.py \
       --mission-issue "$MISSION_ISSUE" \
       --mission-repo "$MISSION_REPO" \
       ${MODEL_OVERRIDE:+--model "$MODEL_OVERRIDE"}
 ```
 
-> **Note:** The exact entrypoint command (`python -m src.entrypoint`) is a placeholder. It will be finalized when the DeerFlow autonomous runner module is implemented.
+If `OPENAI_API_KEY` is not configured, the step exits gracefully with a notice.
+
+For continuous operation (running the loop in a Codespace), see [Phase 4 playbook — agentic loop](playbook-phase4-agentic-loop.md).
 
 ---
 
@@ -362,9 +359,9 @@ Ensure the token has `write:packages` scope. The post-create script runs this au
 
 **Symptom:** The workflow posts kickoff/completion comments but does not perform any autonomous work.
 
-**Cause:** The kickoff workflow currently runs a scaffold step (see §5). LLM API keys are not yet configured as repository secrets, or the entrypoint has not been wired.
+**Cause:** LLM API keys are not configured as repository secrets. Without `OPENAI_API_KEY`, the runner step exits gracefully with a notice.
 
-**Fix:** Add the required secrets and replace the scaffold step per §5.
+**Fix:** Add `OPENAI_API_KEY` (and optionally `TAVILY_API_KEY`) as repository secrets under **Settings → Secrets and variables → Actions**.
 
 ### Codespace runs out of disk space
 
@@ -396,6 +393,7 @@ Or clean up unused Docker images: `docker system prune -af`
 
 - [Phase 1 playbook — tooling foundation](playbook-phase1-tooling.md)
 - [Phase 2 playbook — template skill](playbook-phase2-template-skill.md)
+- [Phase 4 playbook — agentic loop](playbook-phase4-agentic-loop.md)
 - [System whitepaper](whitepaper.md)
 - [DeerFlow architecture](deerflow-software-architecture.md)
 - [Label taxonomy](labels.md)
