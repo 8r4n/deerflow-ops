@@ -1,4 +1,4 @@
-# Label taxonomy (deerflow-ops)
+# Label taxonomy (Patronus)
 
 This repository uses GitHub labels as a lightweight schema. The goal is to make issues:
 - easy to filter and search

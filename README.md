@@ -1,4 +1,4 @@
-# 🦌 DeerFlow Ops
+# 🦌 Patronus: A ByteDance DeerFlow Agentic System
 
 **Operations, memory, and run journal** for a cloud-hosted autonomous assistant built on [ByteDance DeerFlow](https://github.com/bytedance/deer-flow) and [GitHub Codespaces](https://github.com/features/codespaces).
 

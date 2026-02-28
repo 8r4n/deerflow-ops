@@ -1,4 +1,4 @@
-# Whitepaper: Issue-Centric Autonomous Assistant with DeerFlow, MCP, and GitHub Codespaces
+# Patronus: A ByteDance DeerFlow Agentic System — Whitepaper
 
 **Version:** 0.1 (draft)  
 **Date:** 2026-02-27  
