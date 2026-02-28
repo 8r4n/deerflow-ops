@@ -53,8 +53,8 @@ class TestBuildMissionPrompt:
 class TestListActiveMissions:
     @patch("autonomous_runner._run_gh")
     def test_filters_to_mission_labels(self, mock_gh):
-        import json as _json
-        mock_gh.return_value = _json.dumps([
+        import json
+        mock_gh.return_value = json.dumps([
             {"number": 1, "title": "A", "labels": [{"name": "mission:dev"}, {"name": "status:active"}]},
             {"number": 2, "title": "B", "labels": [{"name": "status:active"}]},  # no mission:*
             {"number": 3, "title": "C", "labels": [{"name": "mission:research"}, {"name": "status:active"}]},

@@ -49,12 +49,18 @@ logger = logging.getLogger("autonomous_runner")
 # ---------------------------------------------------------------------------
 
 GITHUB_TOKEN_ENV = "GITHUB_TOKEN"
+MAX_COMMENT_LENGTH = 3000
 
 
 def _run_gh(*args: str) -> str:
     """Run a ``gh`` CLI command and return its stdout."""
     cmd = ["gh"] + list(args)
-    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(
+            f"gh command failed: {' '.join(cmd)}\nstderr: {exc.stderr}"
+        ) from exc
     return result.stdout.strip()
 
 
@@ -123,7 +129,7 @@ def build_mission_prompt(issue: dict, repo: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-async def invoke_deerflow(prompt: str, model_name: str | None = None) -> str:
+async def invoke_deerflow(prompt: str, model_name: str | None = None, issue_number: int = 0) -> str:
     """Invoke the DeerFlow lead agent with *prompt* and return its final response."""
     # Ensure the deer-flow backend is importable
     deer_flow_backend = Path(__file__).resolve().parent.parent / "deer-flow" / "backend"
@@ -149,7 +155,7 @@ async def invoke_deerflow(prompt: str, model_name: str | None = None) -> str:
 
     config: dict = {
         "configurable": {
-            "thread_id": f"mission-{int(time.time())}",
+            "thread_id": f"mission-{issue_number}-{int(time.time())}",
             "thinking_enabled": True,
             "is_plan_mode": True,
             "subagent_enabled": True,
@@ -192,8 +198,8 @@ async def run_single_mission(
     post_comment(repo, issue_number, "🦌 **Autonomous Runner** — processing this mission …")
 
     try:
-        response = await invoke_deerflow(prompt, model_name=model)
-        summary = response[:3000]  # cap comment length
+        response = await invoke_deerflow(prompt, model_name=model, issue_number=issue_number)
+        summary = response[:MAX_COMMENT_LENGTH]
         post_comment(
             repo, issue_number,
             f"✅ **Autonomous Runner** — mission processed.\n\n{summary}",

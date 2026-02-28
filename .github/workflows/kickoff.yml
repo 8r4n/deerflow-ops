@@ -121,7 +121,7 @@ jobs:
           python scripts/autonomous_runner.py \
             --mission-issue "$MISSION_ISSUE" \
             --mission-repo "$MISSION_REPO" \
-            ${MODEL_OVERRIDE:+--model "$MODEL_OVERRIDE"}
+            ${MODEL_OVERRIDE:+--model "$MODEL_OVERRIDE"}  # include --model only when set
 
       - name: Post completion comment
         if: always()
