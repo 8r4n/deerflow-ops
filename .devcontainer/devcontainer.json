@@ -8,8 +8,8 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "postCreateCommand": "git submodule update --init --recursive && cd deer-flow && pip install -e '.[dev]' && pip install mcp-server-fetch==2025.4.7 && cd frontend && npm install -g pnpm && pnpm install && echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin 2>/dev/null || true",
-  "postStartCommand": "echo '✅ Codespace ready — run: cd deer-flow && make backend (then cd frontend && pnpm dev in a second terminal)'",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "echo '✅ Codespace ready — edit deer-flow/.env with API keys, then: cd deer-flow && make dev'",
   "containerEnv": {
     "DOCKER_BUILDKIT": "1",
     "DEER_FLOW_EXTENSIONS_CONFIG_PATH": "${containerWorkspaceFolder}/extensions_config.json"
@@ -28,5 +28,5 @@
       ]
     }
   },
-  "forwardPorts": [2024, 2026, 3000, 8001]
+  "forwardPorts": [2024, 2026, 3000, 8001, 8080]
 }

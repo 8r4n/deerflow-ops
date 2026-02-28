@@ -100,7 +100,7 @@ git submodule update --init --recursive
 
 ```bash
 cd deer-flow
-make config          # generates .env and config.yaml from examples
+make config          # generates .env and config.yaml from examples (auto-run in Codespaces)
 ```
 
 Edit `deer-flow/.env` with your API keys:
@@ -112,14 +112,15 @@ TAVILY_API_KEY=your-tavily-api-key
 
 Edit `deer-flow/config.yaml` to select your preferred model(s). See the [upstream configuration guide](https://github.com/bytedance/deer-flow/blob/main/backend/docs/CONFIGURATION.md) for details.
 
+> **Codespaces:** The aio sandbox (isolated Docker-based code execution) is enabled by default. The sandbox image is pre-pulled during creation. See `docs/playbook-phase1-tooling.md` for details.
+
 ### 3. Start services
 
 **GitHub Codespaces (recommended):**
 
 ```bash
 cd deer-flow
-make backend                         # terminal 1 — backend
-cd frontend && pnpm dev              # terminal 2 — frontend
+make dev                             # starts backend + frontend + nginx
 ```
 
 Access the UI via Codespace port-forwarding on port **2026**.
@@ -128,8 +129,7 @@ Access the UI via Codespace port-forwarding on port **2026**.
 
 ```bash
 cd deer-flow
-pip install -e ".[dev]" && make backend          # terminal 1
-cd frontend && pnpm install && pnpm dev          # terminal 2
+pip install -e ".[dev]" && make dev
 ```
 
 ### 4. MCP server reference
