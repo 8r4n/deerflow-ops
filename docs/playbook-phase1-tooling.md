@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Documents the tooling foundation for the DeerFlow autonomous assistant system: MCP server configuration, GitHub Codespaces setup, GHCR image push workflow, and automated mission kickoff.
+Documents the tooling foundation for the Patronus autonomous assistant system (a ByteDance DeerFlow Agentic System): MCP server configuration, GitHub Codespaces setup, GHCR image push workflow, and automated mission kickoff.
 
 ---
 

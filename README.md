@@ -1,28 +1,31 @@
-# 🦌 DeerFlow Ops
-
-**Operations, memory, and run journal** for a cloud-hosted autonomous assistant built on [ByteDance DeerFlow](https://github.com/bytedance/deer-flow) and [GitHub Codespaces](https://github.com/features/codespaces).
-
-| Repo | Purpose |
-|------|---------|
-| [`8r4n/deerflow-ops`](https://github.com/8r4n/deerflow-ops) (this repo) | Issue-based durable memory, run logs, mission tracking, and bootstrap docs |
-| [`8r4n/deerflow-skills`](https://github.com/8r4n/deerflow-skills) | Skill implementations — one folder per skill with Dockerfiles, tests, and manifests |
-| [`bytedance/deer-flow`](https://github.com/bytedance/deer-flow) (submodule → `deer-flow/`) | Upstream DeerFlow runtime for orchestration |
+<div align="center">
+  <img src="assets/patronus-logo.png" alt="Patronus Logo" width="180" />
+  <h1>Patronus</h1>
+  <p><strong>A ByteDance DeerFlow Agentic System</strong></p>
+  <p>
+    <a href="https://github.com/8r4n/deerflow-ops"><img src="https://img.shields.io/badge/repo-deerflow--ops-blue?logo=github" alt="Repo"></a>
+    <a href="https://github.com/8r4n/deerflow-skills"><img src="https://img.shields.io/badge/skills-deerflow--skills-green?logo=github" alt="Skills"></a>
+    <a href="https://github.com/bytedance/deer-flow"><img src="https://img.shields.io/badge/runtime-ByteDance%20DeerFlow-orange?logo=github" alt="DeerFlow"></a>
+    <a href="https://github.com/features/codespaces"><img src="https://img.shields.io/badge/runs%20on-GitHub%20Codespaces-blueviolet?logo=github" alt="Codespaces"></a>
+  </p>
+  <p><em>Operations, memory, and run journal for a cloud-hosted autonomous assistant.</em></p>
+</div>
 
 ---
 
-## Architecture overview
+## Overview
 
-The system implements an autonomous personal assistant that uses:
+**Patronus** is an autonomous personal assistant built on [ByteDance DeerFlow](https://github.com/bytedance/deer-flow) for agent orchestration, [Model Context Protocol (MCP)](https://modelcontextprotocol.io) for tool integration, and [GitHub Codespaces](https://github.com/features/codespaces) for safe, cloud-hosted execution. All durable memory, run logs, and mission records live as structured **GitHub Issues** — providing a transparent, portable, and auditable audit trail.
 
-- **DeerFlow** for agent orchestration (planner → executor → verifier loop)
-- **MCP servers** for tool integration (GitHub, web fetch, Codespaces)
-- **GitHub Codespaces** for safe, cloud-hosted execution environments
-- **GitHub Container Registry (ghcr.io)** for versioned skill image publishing
-- **GitHub Issues** as the durable memory store, audit trail, and programmatic progress interface
+| Repository | Role |
+|------------|------|
+| [`8r4n/deerflow-ops`](https://github.com/8r4n/deerflow-ops) ← **this repo** | Issue-based durable memory, run logs, mission tracking, and bootstrap docs |
+| [`8r4n/deerflow-skills`](https://github.com/8r4n/deerflow-skills) | Skill implementations — one folder per skill with Dockerfiles, tests, and manifests |
+| [`bytedance/deer-flow`](https://github.com/bytedance/deer-flow) (submodule → `deer-flow/`) | Upstream DeerFlow runtime for agent orchestration |
 
-See [`docs/whitepaper.md`](docs/whitepaper.md) for the full design rationale.
+---
 
-### Data flow
+## Architecture
 
 ```
 Mission issue (deerflow-ops)
@@ -36,9 +39,22 @@ Mission issue (deerflow-ops)
                     └─► Links everything for traceability
 ```
 
+**Core components:**
+
+| Component | Purpose |
+|-----------|---------|
+| **DeerFlow** | Agent orchestration — planner → executor → verifier loop |
+| **GitHub MCP** | Read/write issues and PRs, search code, update progress, plan missions |
+| **Web Fetch MCP** | Ingest external documentation and web sources |
+| **GitHub Codespaces** | Cloud-hosted, ephemeral execution environment |
+| **GitHub Container Registry** | Versioned skill image publishing (`ghcr.io`) |
+| **GitHub Issues** | Durable memory store, audit trail, and programmatic progress interface |
+
+See [`docs/whitepaper.md`](docs/whitepaper.md) for the full design rationale.
+
 ---
 
-## Bootstrap guide
+## Quick start
 
 ### Prerequisites
 
@@ -47,10 +63,12 @@ Mission issue (deerflow-ops)
 | GitHub account | With Codespaces access |
 | Git | 2.x |
 | Python | 3.11+ |
-| Node.js | 18+ (for DeerFlow frontend) |
+| Node.js | 18+ |
 | Make | any |
 
-You also need API keys for at least one LLM provider (OpenAI, Anthropic, etc.) and a search provider (Tavily recommended). A `GITHUB_TOKEN` with `repo`, `write:packages`, and `codespace` scopes is required for GHCR and Codespaces integration.
+You also need:
+- API keys for at least one LLM provider (OpenAI, Anthropic, etc.) and a search provider (Tavily recommended)
+- A `GITHUB_TOKEN` with `repo`, `write:packages`, and `codespace` scopes
 
 ### 1. Open in GitHub Codespaces (recommended)
 
@@ -60,85 +78,73 @@ Click **Code → Codespaces → Create codespace on main** in the GitHub UI, or 
 gh codespace create --repo 8r4n/deerflow-ops --machine standardLinux32gb
 ```
 
-The dev container will automatically initialize the submodule and install backend/frontend dependencies. You will still need to configure API keys (see step 2) and start services manually (see step 3).
+The dev container automatically initializes the submodule and installs all dependencies. Configure API keys (step 2), then start services (step 3).
 
-### 1b. Alternative: Clone locally
+### 1b. Clone locally
 
 ```bash
 git clone --recurse-submodules https://github.com/8r4n/deerflow-ops.git
 cd deerflow-ops
 ```
 
-If you already cloned without `--recurse-submodules`:
+<details>
+<summary>Already cloned without submodules?</summary>
 
 ```bash
 git submodule update --init --recursive
 ```
 
-### 2. Set up DeerFlow
+</details>
+
+### 2. Configure DeerFlow
 
 ```bash
 cd deer-flow
 make config          # generates .env and config.yaml from examples
 ```
 
-Edit `deer-flow/.env` and add your API keys:
+Edit `deer-flow/.env` with your API keys:
 
 ```bash
 OPENAI_API_KEY=your-openai-api-key
 TAVILY_API_KEY=your-tavily-api-key
-# Add other provider keys as needed
 ```
 
-Edit `deer-flow/config.yaml` to configure your preferred model(s). See the [upstream configuration guide](https://github.com/bytedance/deer-flow/blob/main/backend/docs/CONFIGURATION.md) for details.
+Edit `deer-flow/config.yaml` to select your preferred model(s). See the [upstream configuration guide](https://github.com/bytedance/deer-flow/blob/main/backend/docs/CONFIGURATION.md) for details.
 
-### 3. Run DeerFlow
+### 3. Start services
 
-#### Option A — GitHub Codespaces (recommended)
-
-If running in a Codespace, dependencies are pre-installed by the dev container. Start services manually:
+**GitHub Codespaces (recommended):**
 
 ```bash
 cd deer-flow
-make backend         # start backend services
-cd frontend && pnpm dev  # start frontend (separate terminal)
+make backend                         # terminal 1 — backend
+cd frontend && pnpm dev              # terminal 2 — frontend
 ```
 
-Access the UI through the Codespace port-forwarding on port **2026**.
+Access the UI via Codespace port-forwarding on port **2026**.
 
-#### Option B — Local development
+**Local development:**
 
 ```bash
 cd deer-flow
-
-# Backend
-pip install -e ".[dev]"
-make backend
-
-# Frontend (separate terminal)
-cd frontend && pnpm install && pnpm dev
+pip install -e ".[dev]" && make backend          # terminal 1
+cd frontend && pnpm install && pnpm dev          # terminal 2
 ```
 
-### 4. Configure MCP servers
+### 4. MCP server reference
 
-The system uses these MCP servers:
+| Server | Purpose | Authentication |
+|--------|---------|----------------|
+| **GitHub MCP** | Issues, PRs, code search, progress updates | `GITHUB_TOKEN` (`repo`, `write:packages`, `codespace`) |
+| **Web Fetch MCP** | Ingest external documentation | None required |
+| **Codespaces MCP** | Manage Codespace lifecycle | Planned — see Phase 1 roadmap |
 
-| Server | Purpose | Setup |
-|--------|---------|-------|
-| **GitHub MCP** | Read/write issues and PRs, search code, update progress, plan missions | Provide a `GITHUB_TOKEN` with `repo`, `write:packages`, and `codespace` scopes |
-| **Web fetch MCP** | Ingest external documentation | Included in DeerFlow |
-| **Codespaces MCP** | Manage Codespace lifecycle (create, start, stop, delete) | Planned — see Phase 1 roadmap |
-
-### 5. Staying up to date with upstream DeerFlow
+### 5. Keep DeerFlow up to date
 
 ```bash
-cd deer-flow
-git fetch origin
-git checkout main
-git pull
-cd ..
-git add deer-flow
-git commit -m "Update deer-flow submodule to latest upstream"
+cd deer-flow && git fetch origin && git checkout main && git pull
+cd .. && git add deer-flow && git commit -m "Update deer-flow submodule"
 ```
 
 ---
@@ -147,41 +153,42 @@ git commit -m "Update deer-flow submodule to latest upstream"
 
 ```
 deerflow-ops/
-├── README.md                   ← you are here
-├── extensions_config.json      ← MCP server configuration (GitHub, fetch)
-├── deer-flow/                  ← bytedance/deer-flow submodule
+├── README.md                        ← you are here
+├── extensions_config.json           ← MCP server configuration
+├── assets/                          ← project logo and images
+├── deer-flow/                       ← bytedance/deer-flow submodule
 ├── .devcontainer/
-│   └── devcontainer.json      ← GitHub Codespaces dev container config
+│   └── devcontainer.json            ← GitHub Codespaces dev container
 ├── docs/
-│   ├── whitepaper.md           ← full system design
-│   ├── deerflow-software-architecture.md ← DeerFlow architecture analysis
-│   ├── labels.md               ← GitHub label taxonomy
-│   ├── index-issues.md         ← how to maintain pinned index issues
-│   └── playbook-phase1-tooling.md ← Phase 1 tooling setup playbook
+│   ├── whitepaper.md                ← full system design
+│   ├── deerflow-software-architecture.md
+│   ├── labels.md                    ← GitHub label taxonomy
+│   ├── index-issues.md              ← maintaining pinned index issues
+│   └── playbook-phase1-tooling.md   ← Phase 1 tooling playbook
 └── .github/
-    ├── ISSUE_TEMPLATE/         ← structured templates for missions,
-    │                              run logs, and memory entries
+    ├── ISSUE_TEMPLATE/              ← mission, run log, memory templates
     └── workflows/
-        ├── ghcr-publish.yml    ← GHCR authentication and image push
-        └── kickoff.yml         ← automatic mission kickoff
+        ├── ghcr-publish.yml         ← GHCR image push workflow
+        └── kickoff.yml              ← automatic mission kickoff
 ```
 
 ---
 
 ## Memory model
 
-All durable memory lives as GitHub Issues in this repo, organized by labels:
+All durable memory lives as GitHub Issues, organized by label:
 
 | Label | Purpose |
 |-------|---------|
 | `memory:skill` | Skill documentation and metadata |
-| `memory:repo` | Repository evaluations (adopted/rejected) |
+| `memory:repo` | Repository evaluations (adopted / rejected) |
 | `memory:playbook` | Reusable procedures and setup guides |
 | `run:log` | Individual execution logs |
-| `mission:*` | Mission categories (comms, dev, research, etc.) |
+| `mission:*` | Mission categories (comms, dev, research, …) |
 | `status:*` | Lifecycle state (active, blocked, done, deprecated) |
 
-See [`docs/labels.md`](docs/labels.md) for the full taxonomy and [`docs/index-issues.md`](docs/index-issues.md) for how pinned index issues are maintained.
+→ [`docs/labels.md`](docs/labels.md) — full taxonomy  
+→ [`docs/index-issues.md`](docs/index-issues.md) — how pinned index issues are maintained
 
 ---
 
@@ -189,20 +196,22 @@ See [`docs/labels.md`](docs/labels.md) for the full taxonomy and [`docs/index-is
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| **0** | Repo bootstrap — templates, docs, labels, indexes | ✅ |
-| **1** | Tooling foundation — GitHub MCP, Codespaces, GHCR, web fetch MCP | ✅ |
-| **2** | Template skill — canonical `_template` skeleton in `deerflow-skills` with GHCR publish | 🔜 |
-| **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 |
-| **4+** | Expand mission coverage (planning, research, automation) | 🔜 |
+| **0** | Repo bootstrap — templates, docs, labels, indexes | ✅ Done |
+| **1** | Tooling foundation — GitHub MCP, Codespaces, GHCR, web fetch MCP | ✅ Done |
+| **2** | Template skill — canonical `_template` skeleton with GHCR publish | 🔜 Next |
+| **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 Planned |
+| **4+** | Expand mission coverage (planning, research, automation) | 🔜 Planned |
 
 ---
 
-## Related resources
+## Resources
 
-- [DeerFlow upstream docs](https://github.com/bytedance/deer-flow#documentation)
-- [DeerFlow Skills repo](https://github.com/8r4n/deerflow-skills)
-- [System whitepaper](docs/whitepaper.md)
+- 📄 [System whitepaper](docs/whitepaper.md)
+- 🛠 [DeerFlow Skills repo](https://github.com/8r4n/deerflow-skills)
+- 🔗 [ByteDance DeerFlow upstream](https://github.com/bytedance/deer-flow#documentation)
+
+---
 
 ## License
 
-This repository is maintained by [@8r4n](https://github.com/8r4n). The `deer-flow/` submodule is licensed under the [MIT License](https://github.com/bytedance/deer-flow/blob/main/LICENSE) by ByteDance.
+Maintained by [@8r4n](https://github.com/8r4n). The `deer-flow/` submodule is licensed under the [MIT License](https://github.com/bytedance/deer-flow/blob/main/LICENSE) by ByteDance.
