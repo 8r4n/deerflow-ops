@@ -178,7 +178,8 @@ deerflow-ops/
 │   ├── playbook-phase1-tooling.md   ← Phase 1 tooling playbook
 │   ├── playbook-phase2-template-skill.md ← Phase 2 template skill playbook
 │   ├── playbook-phase3-autonomous-skill-acquisition.md ← Phase 3 autonomous skill acquisition
-│   └── playbook-phase4-agentic-loop.md ← Phase 4 continuous operation
+│   ├── playbook-phase4-agentic-loop.md ← Phase 4 continuous operation
+│   └── playbook-phase5-expanded-mission-coverage.md ← Phase 5 expanded missions
 └── .github/
     ├── ISSUE_TEMPLATE/              ← mission, run log, memory templates
     └── workflows/
@@ -215,7 +216,7 @@ All durable memory lives as GitHub Issues, organized by label:
 | **2** | Template skill — canonical `_template` skeleton with GHCR publish | ✅ Done |
 | **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 Next |
 | **4** | Agentic loop — continuous autonomous operation | ✅ Done |
-| **5+** | Expand mission coverage (planning, research, automation) | 🔜 Planned |
+| **5** | Expand mission coverage — content, marketing, ops, sales, commerce | ✅ Done |
 
 ---
 
@@ -223,6 +224,7 @@ All durable memory lives as GitHub Issues, organized by label:
 
 - 📄 [System whitepaper](docs/whitepaper.md)
 - 🔄 [Agentic loop playbook](docs/playbook-phase4-agentic-loop.md)
+- 🎯 [Expanded mission coverage playbook](docs/playbook-phase5-expanded-mission-coverage.md)
 - 🛠 [DeerFlow Skills repo](https://github.com/8r4n/deerflow-skills)
 - 🔗 [ByteDance DeerFlow upstream](https://github.com/bytedance/deer-flow#documentation)
 
