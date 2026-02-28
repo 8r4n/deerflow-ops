@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "github": {
+      "enabled": true,
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "$GITHUB_TOKEN"
+      },
+      "description": "GitHub MCP server — read/write issues, PRs, code search, progress updates, and mission planning"
+    },
+    "fetch": {
+      "enabled": true,
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "env": {},
+      "description": "Web fetch MCP server — ingest external documentation and web sources"
+    }
+  },
+  "skills": {}
+}
