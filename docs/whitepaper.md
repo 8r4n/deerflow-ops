@@ -145,6 +145,7 @@ Metrics:
 
 Personal-assistant purposes are expressed as mission labels in `deerflow-ops`:
 - comms, planning, memory, research, automation, dev, finance, health, logistics, learning, social, risk
+- content, marketing, ops, sales, commerce (added in Phase 5)
 
 Missions produce run logs, code PRs, and promoted durable memories.
 
@@ -224,6 +225,13 @@ Deliverable: `memory:playbook` documenting Codespaces setup, GHCR workflow, and 
 ### Phase 4+ — Expand mission coverage
 - Add non-dev missions (planning, research, automation) as skills mature.
 - Enable the system to self-plan future missions by creating mission issues.
+
+### Phase 5 — Expanded mission coverage
+- Add five new mission categories: content creation, marketing, business operations, sales/CRM, and e-commerce.
+- Informed by real-world AI agent usage patterns (see [RoboNuggets "336 Ways to Use OpenClaw"](https://youtu.be/miJLo234L9s?si=XHUQcggCsYkG_c9D)).
+- Define candidate skills per new category for future autonomous acquisition.
+- Document security guardrails for higher-sensitivity categories (sales, commerce).
+- See [`docs/playbook-phase5-expanded-mission-coverage.md`](../docs/playbook-phase5-expanded-mission-coverage.md) for full details.
 
 ---
 

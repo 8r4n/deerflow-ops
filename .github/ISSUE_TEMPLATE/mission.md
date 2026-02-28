@@ -20,6 +20,11 @@ Choose one and add the matching label:
 - [ ] mission:learning
 - [ ] mission:social
 - [ ] mission:risk
+- [ ] mission:content — content creation, media, newsletters
+- [ ] mission:marketing — social media, SEO, outreach
+- [ ] mission:ops — business operations, reporting
+- [ ] mission:sales — sales pipeline, CRM, lead tracking
+- [ ] mission:commerce — e-commerce, inventory, orders
 
 ## Objective (1–3 sentences)
 What should the system accomplish?

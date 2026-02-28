@@ -213,6 +213,7 @@ Override `list_active_missions()` to sort by priority labels (`risk:high` first)
 ## Related resources
 
 - [Phase 3 playbook — autonomous skill acquisition](playbook-phase3-autonomous-skill-acquisition.md)
+- [Phase 5 playbook — expanded mission coverage](playbook-phase5-expanded-mission-coverage.md)
 - [System whitepaper](whitepaper.md)
 - [DeerFlow architecture](deerflow-software-architecture.md)
 - [Label taxonomy](labels.md)

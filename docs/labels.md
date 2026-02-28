@@ -18,6 +18,11 @@ This repository uses GitHub labels as a lightweight schema. The goal is to make 
 - `mission:learning`
 - `mission:social`
 - `mission:risk`
+- `mission:content` — content creation, media production, newsletters, blogs
+- `mission:marketing` — social media marketing, SEO, outreach campaigns
+- `mission:ops` — business operations, project management, reporting
+- `mission:sales` — sales pipeline, CRM, lead tracking, outreach
+- `mission:commerce` — e-commerce operations, inventory, order processing
 
 ## Run and memory labels
 - `run:log`
