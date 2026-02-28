@@ -1,6 +1,6 @@
 # 🦌 DeerFlow Ops
 
-**Operations, memory, and run journal** for a local-first autonomous assistant built on [ByteDance DeerFlow](https://github.com/bytedance/deer-flow).
+**Operations, memory, and run journal** for a cloud-hosted autonomous assistant built on [ByteDance DeerFlow](https://github.com/bytedance/deer-flow) and [GitHub Codespaces](https://github.com/features/codespaces).
 
 | Repo | Purpose |
 |------|---------|
@@ -185,9 +185,9 @@ See [`docs/labels.md`](docs/labels.md) for the full taxonomy and [`docs/index-is
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **0** | Repo bootstrap — templates, docs, labels, indexes | ✅ |
-| **1** | Tooling foundation — GitHub MCP, Docker Spawner MCP, web fetch MCP | 🔜 |
-| **2** | Template skill — canonical `_template` skeleton in `deerflow-skills` | 🔜 |
-| **3** | First autonomous skill acquisition run | 🔜 |
+| **1** | Tooling foundation — GitHub MCP, Codespaces, GHCR, web fetch MCP | 🔜 |
+| **2** | Template skill — canonical `_template` skeleton in `deerflow-skills` with GHCR publish | 🔜 |
+| **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 |
 | **4+** | Expand mission coverage (planning, research, automation) | 🔜 |
 
 ---
