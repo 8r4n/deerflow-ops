@@ -1,6 +1,5 @@
 <div align="center">
   <img src="assets/patronus-logo.png" alt="Patronus Logo" width="180" />
-  <h1>Patronus</h1>
   <p><strong>A ByteDance DeerFlow Agentic System</strong></p>
   <p>
     <a href="https://github.com/8r4n/deerflow-ops"><img src="https://img.shields.io/badge/repo-deerflow--ops-blue?logo=github" alt="Repo"></a>
