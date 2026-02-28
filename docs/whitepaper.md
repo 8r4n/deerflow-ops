@@ -211,7 +211,7 @@ Every shipped skill must have:
 - Add Web fetch MCP
 - Configure programmatic GitHub Issues interface for progress updates
 
-Deliverable: `memory:playbook` documenting Codespaces setup, GHCR workflow, and GitHub Issues integration.
+Deliverable: `memory:playbook` documenting Codespaces setup, GHCR workflow, and GitHub Issues integration (authentication, MCP configuration, progress update patterns, and mission planning conventions).
 
 ### Phase 2 — Template skill
 - Add a canonical `_template` skill skeleton for fast skill generation.
