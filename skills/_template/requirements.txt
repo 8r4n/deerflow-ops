@@ -1,0 +1,2 @@
+# Add skill dependencies here.
+# Pin versions for reproducible builds (e.g., flask==3.1.0).
