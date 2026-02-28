@@ -248,7 +248,7 @@ gh workflow run kickoff.yml \
 
 Label a mission issue with `status:active` → the kickoff workflow runs automatically.
 
-> **Note:** The kickoff workflow currently validates the environment but does not invoke DeerFlow autonomously (see §5 on wiring the entrypoint). Full autonomous execution requires LLM API keys configured as repository secrets.
+> **Note:** If LLM API keys (`OPENAI_API_KEY`) are not configured as repository secrets, the runner step exits gracefully without error.
 
 ### 4.3 Creating a skill acquisition mission
 
@@ -277,19 +277,12 @@ Discover, evaluate, and wrap <library-name> as a DeerFlow skill.
 
 ---
 
-## 5. Wiring the DeerFlow Entrypoint (Planned)
+## 5. Wiring the DeerFlow Entrypoint
 
-The kickoff workflow currently runs a scaffold step (§4.2). To enable full autonomous execution, the "Validate environment" step in `.github/workflows/kickoff.yml` must be replaced with a call to the DeerFlow entrypoint.
-
-**What is needed:**
-
-1. **Add LLM API keys** as repository secrets (`OPENAI_API_KEY`, `TAVILY_API_KEY`, etc.)
-2. **Add a cross-repo token** as a repository or Codespaces secret if the default `GITHUB_TOKEN` lacks sufficient scope for `deerflow-skills` access
-3. **Replace the scaffold step** in `kickoff.yml` with the actual DeerFlow invocation:
+The kickoff workflow invokes the autonomous runner (`scripts/autonomous_runner.py`) to process missions. When LLM API keys are configured as repository secrets, the workflow calls:
 
 ```yaml
-- name: Run DeerFlow autonomous mission
-  working-directory: deer-flow
+- name: Run autonomous mission
   env:
     MISSION_ISSUE: ${{ steps.mission.outputs.issue_number }}
     MISSION_REPO: ${{ github.repository }}
@@ -297,13 +290,15 @@ The kickoff workflow currently runs a scaffold step (§4.2). To enable full auto
     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
   run: |
-    python -m src.entrypoint \
+    python scripts/autonomous_runner.py \
       --mission-issue "$MISSION_ISSUE" \
       --mission-repo "$MISSION_REPO" \
       ${MODEL_OVERRIDE:+--model "$MODEL_OVERRIDE"}
 ```
 
-> **Note:** The exact entrypoint command (`python -m src.entrypoint`) is a placeholder. It will be finalized when the DeerFlow autonomous runner module is implemented.
+If `OPENAI_API_KEY` is not configured, the step exits gracefully with a notice.
+
+For continuous operation (running the loop in a Codespace), see [Phase 4 playbook — agentic loop](playbook-phase4-agentic-loop.md).
 
 ---
 
@@ -396,6 +391,7 @@ Or clean up unused Docker images: `docker system prune -af`
 
 - [Phase 1 playbook — tooling foundation](playbook-phase1-tooling.md)
 - [Phase 2 playbook — template skill](playbook-phase2-template-skill.md)
+- [Phase 4 playbook — agentic loop](playbook-phase4-agentic-loop.md)
 - [System whitepaper](whitepaper.md)
 - [DeerFlow architecture](deerflow-software-architecture.md)
 - [Label taxonomy](labels.md)
