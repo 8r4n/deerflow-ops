@@ -148,6 +148,7 @@ git commit -m "Update deer-flow submodule to latest upstream"
 ```
 deerflow-ops/
 ├── README.md                   ← you are here
+├── extensions_config.json      ← MCP server configuration (GitHub, fetch)
 ├── deer-flow/                  ← bytedance/deer-flow submodule
 ├── .devcontainer/
 │   └── devcontainer.json      ← GitHub Codespaces dev container config
@@ -155,10 +156,14 @@ deerflow-ops/
 │   ├── whitepaper.md           ← full system design
 │   ├── deerflow-software-architecture.md ← DeerFlow architecture analysis
 │   ├── labels.md               ← GitHub label taxonomy
-│   └── index-issues.md         ← how to maintain pinned index issues
+│   ├── index-issues.md         ← how to maintain pinned index issues
+│   └── playbook-phase1-tooling.md ← Phase 1 tooling setup playbook
 └── .github/
-    └── ISSUE_TEMPLATE/         ← structured templates for missions,
-                                   run logs, and memory entries
+    ├── ISSUE_TEMPLATE/         ← structured templates for missions,
+    │                              run logs, and memory entries
+    └── workflows/
+        ├── ghcr-publish.yml    ← GHCR authentication and image push
+        └── kickoff.yml         ← automatic mission kickoff
 ```
 
 ---
@@ -185,7 +190,7 @@ See [`docs/labels.md`](docs/labels.md) for the full taxonomy and [`docs/index-is
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **0** | Repo bootstrap — templates, docs, labels, indexes | ✅ |
-| **1** | Tooling foundation — GitHub MCP, Codespaces, GHCR, web fetch MCP | 🔜 |
+| **1** | Tooling foundation — GitHub MCP, Codespaces, GHCR, web fetch MCP | ✅ |
 | **2** | Template skill — canonical `_template` skeleton in `deerflow-skills` with GHCR publish | 🔜 |
 | **3** | First autonomous skill acquisition run (in Codespaces) | 🔜 |
 | **4+** | Expand mission coverage (planning, research, automation) | 🔜 |

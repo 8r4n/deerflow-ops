@@ -1,0 +1,66 @@
+# GHCR Publish — build and push container images to GitHub Container Registry
+#
+# This workflow provides the GHCR authentication and image push pattern
+# used across the deerflow ecosystem. It is triggered manually only.
+#
+# Prerequisites: A Dockerfile must exist at the repository root.
+# Currently this repo has no Dockerfile — this workflow serves as the
+# reference pattern for skill image publishing in deerflow-skills.
+
+name: GHCR Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag (default: sha-<short-sha>)"
+        required: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Check for Dockerfile
+        run: |
+          if [ ! -f Dockerfile ]; then
+            echo "::error::No Dockerfile found at repository root. Add a Dockerfile before running this workflow."
+            exit 1
+          fi
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ inputs.image_tag }},enable=${{ inputs.image_tag != '' }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
